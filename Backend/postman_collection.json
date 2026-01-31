@@ -1,0 +1,245 @@
+{
+  "info": {
+    "name": "Praan Assignment - Akshat Girdhar",
+    "description": "Sensor Data Storage and Commands",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "device_id",
+      "value": "device_001",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        }
+      }
+    },
+    {
+      "name": "Schedules",
+      "item": [
+        {
+          "name": "Create Schedule",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deviceId\": \"{{device_id}}\",\n  \"day\": \"Monday\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"17:00\",\n  \"fanSpeed\": 75\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/schedules",
+              "host": ["{{base_url}}"],
+              "path": ["api", "schedules"]
+            }
+          }
+        },
+        {
+          "name": "Get All Schedules",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/schedules",
+              "host": ["{{base_url}}"],
+              "path": ["api", "schedules"]
+            }
+          }
+        },
+        {
+          "name": "Get Schedules by Device",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/schedules?deviceId={{device_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "schedules"],
+              "query": [
+                {
+                  "key": "deviceId",
+                  "value": "{{device_id}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Schedule",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/schedules/:scheduleId",
+              "host": ["{{base_url}}"],
+              "path": ["api", "schedules", ":scheduleId"],
+              "variable": [
+                {
+                  "key": "scheduleId",
+                  "value": "REPLACE_WITH_SCHEDULE_ID"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pre-Clean",
+      "item": [
+        {
+          "name": "Trigger Pre-Clean",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deviceId\": \"{{device_id}}\",\n  \"fanMode\": 100,\n  \"duration\": 300\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pre-clean",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pre-clean"]
+            }
+          }
+        },
+        {
+          "name": "Trigger Pre-Clean (2 minutes)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deviceId\": \"{{device_id}}\",\n  \"fanMode\": 80,\n  \"duration\": 120\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/pre-clean",
+              "host": ["{{base_url}}"],
+              "path": ["api", "pre-clean"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Devices",
+      "item": [
+        {
+          "name": "Get All Devices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/devices",
+              "host": ["{{base_url}}"],
+              "path": ["api", "devices"]
+            }
+          }
+        },
+        {
+          "name": "Get Device Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/devices/{{device_id}}/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "devices", "{{device_id}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "Get Device Telemetry",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/devices/{{device_id}}/telemetry?limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["api", "devices", "{{device_id}}", "telemetry"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Device Telemetry (Date Range)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/devices/{{device_id}}/telemetry?startDate=2026-01-01&endDate=2026-02-01&limit=100",
+              "host": ["{{base_url}}"],
+              "path": ["api", "devices", "{{device_id}}", "telemetry"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "2026-01-01"
+                },
+                {
+                  "key": "endDate",
+                  "value": "2026-02-01"
+                },
+                {
+                  "key": "limit",
+                  "value": "100"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Command History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/devices/{{device_id}}/commands?limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "devices", "{{device_id}}", "commands"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
