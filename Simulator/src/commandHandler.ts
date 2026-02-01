@@ -27,6 +27,12 @@ export const handleCommand = (command: Command): Acknowledgement => {
       default:
         throw new Error(`Unknown Command type : ${command.commandType}`);
     }
+
+    return {
+      commandId: command.commandId,
+      status: "success",
+      message: "Command executed successfully",
+    };
   } catch (error: any) {
     console.error(`!!!!! Command Failed: ${error.message}`);
 

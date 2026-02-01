@@ -13,6 +13,13 @@ export const createSchedule = async (req: Request, res: Response) => {
       });
     }
 
+    if (startTime >= endTime) {
+      return res.status(400).json({
+        success: false,
+        message: "Start time must be before end time",
+      });
+    }
+
     if (fanSpeed < 0 || fanSpeed > 100) {
       return res.status(400).json({
         success: false,
@@ -101,7 +108,7 @@ export const deleteSchedule = async (req: Request, res: Response) => {
     cancelJob(schedule._id.toString());
 
     res.status(200).json({
-      success: false,
+      success: true,
       message: "Schedule deleted",
     });
   } catch (error: any) {

@@ -1,5 +1,5 @@
 import mqtt from "mqtt";
-import { DEVICE_ID, MQTT_BROKER_URL } from "./config";
+import { DEVICE_ID, MQTT_BROKER_URL, WIFI_SSID } from "./config";
 import { handleCommand } from "./commandHandler";
 import { Acknowledgement, Command } from "./types";
 import { updateSensors } from "./sensors";
@@ -112,6 +112,7 @@ export const publishTelemetry = (): void => {
   const telemetryData = {
     deviceId: DEVICE_ID,
     ...sensors,
+    wifiSsid: WIFI_SSID,
     timestamp: new Date().toISOString(),
   };
 

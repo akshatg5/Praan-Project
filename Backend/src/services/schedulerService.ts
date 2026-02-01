@@ -38,7 +38,7 @@ export const scheduleJob = (schedule: ISchedule) => {
       schedule.deviceId,
       "SET_FAN_SPEED",
       { fanSpeed: schedule.fanSpeed },
-      "SCHEDULE",
+      "SCHEDULED",
       scheduleId,
     );
 
@@ -58,7 +58,7 @@ export const scheduleJob = (schedule: ISchedule) => {
       schedule.deviceId,
       "POWER_OFF",
       {},
-      "SCHEDULE",
+      "SCHEDULED",
       scheduleId,
     );
 

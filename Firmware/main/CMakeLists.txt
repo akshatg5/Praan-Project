@@ -13,4 +13,5 @@ idf_component_register(
         esp_netif
         mqtt
         cjson
+        esp_http_server
     )
