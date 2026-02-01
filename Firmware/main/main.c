@@ -1,104 +1,81 @@
-/* Blink Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "driver/gpio.h"
 #include "esp_log.h"
-#include "led_strip.h"
-#include "sdkconfig.h"
+#include "nvs_flash.h"
+#include "config.h"
+#include "wifi_manager.h"
+#include "app_mqtt.h"
+#include "device_state.h"
+#include "sensor_manager.h"
 
-static const char *TAG = "example";
+static const char *TAG = "MAIN";
 
-/* Use project configuration menu (idf.py menuconfig) to choose the GPIO to blink,
-   or you can edit the following line and set a number here.
-*/
-#define BLINK_GPIO CONFIG_BLINK_GPIO
+#define TELEMETRY_INTERVAL (120 * 1000) // 2 MINUTES
 
-static uint8_t s_led_state = 0;
-
-#ifdef CONFIG_BLINK_LED_STRIP
-
-static led_strip_handle_t led_strip;
-
-static void blink_led(void)
-{
-    /* If the addressable LED is enabled */
-    if (s_led_state) {
-        /* Set the LED pixel using RGB from 0 (0%) to 255 (100%) for each color */
-        led_strip_set_pixel(led_strip, 0, 16, 16, 16);
-        /* Refresh the strip to send data */
-        led_strip_refresh(led_strip);
-    } else {
-        /* Set all LED off to clear all pixels */
-        led_strip_clear(led_strip);
-    }
-}
-
-static void configure_led(void)
-{
-    ESP_LOGI(TAG, "Example configured to blink addressable LED!");
-    /* LED strip initialization with the GPIO and pixels number*/
-    led_strip_config_t strip_config = {
-        .strip_gpio_num = BLINK_GPIO,
-        .max_leds = 1, // at least one LED on board
-    };
-#if CONFIG_BLINK_LED_STRIP_BACKEND_RMT
-    led_strip_rmt_config_t rmt_config = {
-        .resolution_hz = 10 * 1000 * 1000, // 10MHz
-        .flags.with_dma = false,
-    };
-    ESP_ERROR_CHECK(led_strip_new_rmt_device(&strip_config, &rmt_config, &led_strip));
-#elif CONFIG_BLINK_LED_STRIP_BACKEND_SPI
-    led_strip_spi_config_t spi_config = {
-        .spi_bus = SPI2_HOST,
-        .flags.with_dma = true,
-    };
-    ESP_ERROR_CHECK(led_strip_new_spi_device(&strip_config, &spi_config, &led_strip));
-#else
-#error "unsupported LED strip backend"
-#endif
-    /* Set all LED off to clear all pixels */
-    led_strip_clear(led_strip);
-}
-
-#elif CONFIG_BLINK_LED_GPIO
-
-static void blink_led(void)
-{
-    /* Set the GPIO level according to the state (LOW or HIGH)*/
-    gpio_set_level(BLINK_GPIO, s_led_state);
-}
-
-static void configure_led(void)
-{
-    ESP_LOGI(TAG, "Example configured to blink GPIO LED!");
-    gpio_reset_pin(BLINK_GPIO);
-    /* Set the GPIO as a push/pull output */
-    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-}
-
-#else
-#error "unsupported LED type"
-#endif
-
-void app_main(void)
-{
-
-    /* Configure the peripheral according to the LED type */
-    configure_led();
+// telemetry task
+void telemetry_task(void *pvParameters) {
+    TickType_t xLastWakeTime = xTaskGetTickCount();
+    const TickType_t xFrequency = pdMS_TO_TICKS(TELEMETRY_INTERVAL);
 
     while (1) {
-        ESP_LOGI(TAG, "Turning the LED %s!", s_led_state == true ? "ON" : "OFF");
-        blink_led();
-        /* Toggle the LED state */
-        s_led_state = !s_led_state;
-        vTaskDelay(CONFIG_BLINK_PERIOD / portTICK_PERIOD_MS);
+        // update sensors w the changes
+        sensor_data_t sensors;
+        sensor_manager_update(&sensors);
+        device_state_update_sensors(&sensors);
+
+        // publish telemetry
+        esp_err_t ret = mqtt_publish_telemetry();
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG,"Failed to publish telemetry");
+        }
+
+        // wait for next interval
+        vTaskDelayUntil(&xLastWakeTime,xFrequency);
     }
+}
+
+void app_main(void) {
+    ESP_LOGI(TAG, "========================================");
+    ESP_LOGI(TAG, "IoT Air Purifier - Praan Assignment - Akshat Girdhar");
+    ESP_LOGI(TAG, "Device ID: %s", DEVICE_ID);
+    ESP_LOGI(TAG, "========================================");
+
+    // init device state and NVS
+    ESP_ERROR_CHECK(device_state_init());
+
+    device_state_t *state = device_state_get();
+    ESP_LOGI(TAG, "========================================");
+    ESP_LOGI(TAG,"Initial State : Power : [ %s ]  Fan : [ %d ]", state->power_state ? "ON" : "OFF", state->fan_speed);
+
+    // init sensor manager
+    sensor_manager_init();
+
+    // init wifi
+    esp_err_t wifi_ret = wifi_manager_init();
+    if (wifi_ret != ESP_OK) {
+        ESP_LOGE(TAG,"Wifi Initialization Failed!");
+        return;
+    }
+    ESP_LOGI(TAG,"=========================================");
+    ESP_LOGI(TAG,"WIFI CONNECTED");
+
+    // init mqtt
+    esp_err_t mqtt_ret = mqtt_client_init();
+    if (mqtt_ret != ESP_OK) {
+        ESP_LOGE(TAG,"Mqtt Initialization Failed");
+        return;
+    }
+
+    // wait for mqtt connection
+    vTaskDelay(pdMS_TO_TICKS(2000));
+
+    // start telemetry tasl
+    xTaskCreate(telemetry_task,"telemetry_task",4096,NULL,5,NULL);
+    ESP_LOGI(TAG,"Telemetry Task Stated");
+
+    ESP_LOGI(TAG, "========================================");
+    ESP_LOGI(TAG, "            INIT COMPLETE               ");
+    ESP_LOGI(TAG, "========================================");
+
 }

@@ -6,6 +6,12 @@
 
 #define DEVICE_ID "device_esp32_001"
 
+#define CONFIG_WIFI_SSID "wifi_ssid"
+#define CONFIG_WIFI_PASSWORD "wifi_password"
+#define WIFI_MAX_RETRY 3
+
+#define CONFIG_MQTT_BROKER_URL "mqtt_broker"
+
 // sensors data struct
 typedef struct {
     float temperature;
@@ -41,4 +47,4 @@ typedef struct {
     uint8_t fan_speed;
 } command_t;
 
-#endif CONFIG_H
+#endif // CONFIG_H

@@ -3,6 +3,7 @@
 #include "cJSON.h"
 #include "esp_log.h"
 #include <string.h>
+#include "config.h"
 
 static const char *TAG = "CMD_HANDLER";
 
@@ -36,7 +37,7 @@ esp_err_t command_handler_parse(const char* json_str, command_t* cmd) {
 
     // parse command type
     if (strcmp(cmd_type->valuestring, "SET_FAN_SPEED") == 0) {
-        cmd->command_type = CMD_SET_FAN_SPEED;
+        cmd->cmd_type = CMD_SET_FAN_SPEED;
 
         // extract fan speed from payload
         cJSON *payload = cJSON_GetObjectItem(root,"payload");
@@ -51,12 +52,12 @@ esp_err_t command_handler_parse(const char* json_str, command_t* cmd) {
             }
         }
     } else if (strcmp(cmd_type->valuestring,"POWER_ON") == 0) {
-        cmd->command_type = CMD_POWER_ON;
+        cmd->cmd_type = CMD_POWER_ON;
     } else if (strcmp(cmd_type->valuestring,"POWER_OFF") == 0) {
-        cmd->command_type = CMD_POWER_OFF;
+        cmd->cmd_type = CMD_POWER_OFF;
     } else {
-        esp_loge(TAG,"Unknown Command type : %s",cmd_type->valuestring);
-        cmd->command_type = CMD_UNKNOWN;
+        ESP_LOGE(TAG,"Unknown Command type : %s",cmd_type->valuestring);
+        cmd->cmd_type = CMD_UNKNOWN;
         cJSON_Delete(root);
         return ESP_FAIL;
     }
@@ -70,9 +71,9 @@ esp_err_t command_handler_execute(command_t* cmd) {
         return ESP_ERR_INVALID_ARG;
     }
 
-    ESP_LOGI(TAG,"Executing Command: %d", cmd->command_type);
+    ESP_LOGI(TAG,"Executing Command: %d", cmd->cmd_type);
 
-    switch ( cmd->command_type ) {
+    switch ( cmd->cmd_type ) {
         case CMD_SET_FAN_SPEED:
             if (cmd->fan_speed > 100) {
                     ESP_LOGE(TAG,"Invalid fan Speed : %d", cmd->fan_speed);
@@ -93,6 +94,7 @@ esp_err_t command_handler_execute(command_t* cmd) {
             ESP_LOGE(TAG,"Unknown Command");
             return ESP_FAIL;
     }
+    return ESP_OK;
 }
 
 void command_handler_build_ack(const char* command_id, bool success, const char* error_msg, char* ack_json,size_t max_len) {
@@ -105,7 +107,7 @@ void command_handler_build_ack(const char* command_id, bool success, const char*
         cJSON_AddStringToObject(root,"message",error_msg);
     }
 
-    char *json_str = cJSON_PrintUnformatter(root);
+    char *json_str = cJSON_PrintUnformatted(root);
     if (json_str) {
         strncpy(ack_json, json_str, max_len - 1);
         ack_json[max_len - 1] = '\0';

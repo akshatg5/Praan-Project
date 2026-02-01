@@ -11,7 +11,7 @@ static device_state_t device_state;
 esp_err_t device_state_init(void) {
     // init NVS
     esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+    if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
         ESP_ERROR_CHECK(nvs_flash_erase());
         ret = nvs_flash_init();
     }
@@ -46,7 +46,7 @@ device_state_t* device_state_get(void) {
     return &device_state;
 }
 
-esp_rr_t device_state_set_fan_speed(uint8_t speed) {
+esp_err_t device_state_set_fan_speed(uint8_t speed) {
     if (speed > 100) {
         ESP_LOGE(TAG,"Invalid Fan Speed");
         return ESP_ERR_INVALID_ARG;
@@ -55,6 +55,11 @@ esp_rr_t device_state_set_fan_speed(uint8_t speed) {
     device_state.fan_speed = speed;
     device_state.power_state = true;
     
+    return device_state_save();
+}
+
+esp_err_t device_state_set_power(bool power_on) {
+    device_state.power_state = power_on;
     return device_state_save();
 }
 
@@ -68,7 +73,7 @@ esp_err_t device_state_save(void) {
     nvs_handle_t nvs_handle;
     esp_err_t ret = nvs_open(NVS_NAMESPACE, NVS_READWRITE, &nvs_handle);
     if (ret != ESP_OK) {
-        esp_loge(TAG, "Failed to open NVS");
+        ESP_LOGE(TAG, "Failed to open NVS");
         return ret;
     }
 

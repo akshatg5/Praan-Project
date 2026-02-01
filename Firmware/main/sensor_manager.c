@@ -14,7 +14,7 @@ static float random_float(float min, float max) {
 
 static float gradual_change(float current_val, float min, float max) {
     float change = (random_float(0,1) - 0.5f) * 2.0f * MAX_CHANGE;
-    float new_val = current_val + chnge;
+    float new_val = current_val + change;
 
     // make sure it's within bounds
     if (new_val < min) new_val = min;
