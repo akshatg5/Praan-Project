@@ -4,7 +4,6 @@ import Command from "../models/Command";
 import { publishCommand } from "../mqtt/mqttClient";
 
 // in  memory map for active jobs
-// TODO : store the active jobs in the db as well -> not safe in memory
 const activeJobs = new Map<string, cron.ScheduledTask[]>();
 
 const dayToCron: { [key: string]: number } = {

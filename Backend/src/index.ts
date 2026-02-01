@@ -12,7 +12,7 @@ import preCleanRoutes from "./routes/preCleanRoutes";
 import deviceRoutes from "./routes/deviceRoutes";
 import { initSchedules } from "./services/schedulerService";
 
-const PORT = 3000;
+const PORT = 8000;
 const app = express();
 
 // middlewares
