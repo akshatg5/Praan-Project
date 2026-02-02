@@ -123,6 +123,8 @@ esp_err_t mqtt_publish_telemetry(void) {
     cJSON_AddNumberToObject(root, "soundLevel", state->sensors.sound_level);
     cJSON_AddNumberToObject(root, "wifiRssi", wifi_get_rssi());
     cJSON_AddStringToObject(root, "wifiSsid",wifi_get_ssid());
+    cJSON_AddNumberToObject(root, "fanSpeed", state->fan_speed);
+    cJSON_AddStringToObject(root, "powerState", state->power_state == POWER_ON ? "ON" : "OFF");
 
     char *json_str = cJSON_PrintUnformatted(root);
 
