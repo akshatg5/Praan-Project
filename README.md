@@ -1,4 +1,4 @@
-## Praan Assignment - Akshat Girdhar
+## Praan Project - Akshat Girdhar
 
 ESP based IoT Air Purifier With Node.js Backend
 
@@ -57,4 +57,3 @@ ESP based IoT Air Purifier With Node.js Backend
 
 #### Setup
 - Backend, Frontend, Simulator, Firmware folders each contain a README.md with setup instructions.
-- 
