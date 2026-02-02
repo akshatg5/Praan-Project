@@ -54,3 +54,7 @@ ESP based IoT Air Purifier With Node.js Backend
 3. Retry mechanisms for disconnections.
 4. Actual implementation of Firmware with actual ESP32 Hardware and Sensors.
 5. Asynchronous execution of commands - a queue for commands.
+
+#### Setup
+- Backend, Frontend, Simulator, Firmware folders each contain a README.md with setup instructions.
+- 
