@@ -10,6 +10,8 @@ export interface ITelemetry extends Document {
   voc: number;
   soundLevel: number;
   wifiRssi: number;
+  fanSpeed: number;
+  powerState: "ON" | "OFF";
   timestamp: Date;
 }
 
@@ -64,6 +66,17 @@ const TelemetrySchema: Schema = new Schema(
     },
     wifiRssi: {
       type: Number,
+      required: true,
+    },
+    fanSpeed: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 100,
+    },
+    powerState: {
+      type: String,
+      enum: ["ON", "OFF"],
       required: true,
     },
     timestamp: {

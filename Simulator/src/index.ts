@@ -10,7 +10,7 @@ const startSimulator = async (): Promise<void> => {
 
   try {
     loadState();
-    const state = getState();
+    let state = getState();
 
     console.log("=======================");
     console.log("Device State on Bootup");
@@ -20,6 +20,16 @@ const startSimulator = async (): Promise<void> => {
     // connect to mqtt broker
     await connectMqtt();
     publishTelemetry(); // initial telemetry data on bootup
+
+    setInterval(() => {
+      // Get fresh state on each interval
+      const currentState = getState();
+      console.log("=======================");
+      console.log("Device State");
+      console.log(`Power State : ${currentState.powerState}`);
+      console.log(`Fan Speed : ${currentState.fanSpeed}`);
+      console.log("=======================");
+    }, 5000);
 
     // start periodic telemetry publish
     telemetryInterval = setInterval(() => {

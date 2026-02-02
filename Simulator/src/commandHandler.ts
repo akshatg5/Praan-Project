@@ -1,4 +1,5 @@
 import { setFanSpeed, setPowerState } from "./deviceState";
+import { publishTelemetry } from "./mqttClient";
 import { Acknowledgement, Command } from "./types";
 
 export const handleCommand = (command: Command): Acknowledgement => {
@@ -27,6 +28,9 @@ export const handleCommand = (command: Command): Acknowledgement => {
       default:
         throw new Error(`Unknown Command type : ${command.commandType}`);
     }
+
+    // Publish telemetry immediately after command execution
+    publishTelemetry();
 
     return {
       commandId: command.commandId,

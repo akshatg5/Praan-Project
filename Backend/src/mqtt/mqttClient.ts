@@ -82,6 +82,8 @@ const handleTelemetryMessage = async (deviceId: string, data: any) => {
       voc: data.voc,
       soundLevel: data.soundLevel,
       wifiRssi: data.wifiRssi,
+      fanSpeed: data.fanSpeed,
+      powerState: data.powerState,
       timestamp: new Date(),
     });
 
@@ -95,6 +97,8 @@ const handleTelemetryMessage = async (deviceId: string, data: any) => {
         isOnline: true,
         lastSeen: new Date(),
         wifiSsid: data.wifiSsid,
+        fanSpeed: data.fanSpeed,
+        powerState: data.powerState,
       },
       {
         upsert: true,

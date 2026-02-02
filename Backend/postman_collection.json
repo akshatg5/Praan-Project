@@ -121,9 +121,9 @@
               "raw": "{\n  \"deviceId\": \"{{device_id}}\",\n  \"fanMode\": 100,\n  \"duration\": 300\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/pre-clean",
+              "raw": "{{base_url}}/api/preclean",
               "host": ["{{base_url}}"],
-              "path": ["api", "pre-clean"]
+              "path": ["api", "preclean"]
             }
           }
         },
@@ -142,9 +142,9 @@
               "raw": "{\n  \"deviceId\": \"{{device_id}}\",\n  \"fanMode\": 80,\n  \"duration\": 120\n}"
             },
             "url": {
-              "raw": "{{base_url}}/api/pre-clean",
+              "raw": "{{base_url}}/api/preclean",
               "host": ["{{base_url}}"],
-              "path": ["api", "pre-clean"]
+              "path": ["api", "preclean"]
             }
           }
         }

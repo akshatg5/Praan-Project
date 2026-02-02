@@ -113,6 +113,8 @@ export const publishTelemetry = (): void => {
     deviceId: DEVICE_ID,
     ...sensors,
     wifiSsid: WIFI_SSID,
+    fanSpeed: state.fanSpeed,
+    powerState: state.powerState,
     timestamp: new Date().toISOString(),
   };
 

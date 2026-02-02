@@ -45,6 +45,8 @@ export const createSchedule = async (req: Request, res: Response) => {
       isActive: true,
     });
 
+    await schedule.save();
+
     // schedule the job
     scheduleJob(schedule);
 

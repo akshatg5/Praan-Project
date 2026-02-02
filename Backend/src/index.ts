@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/schedules", scheduleRoutes);
-app.use("/api/preClean", preCleanRoutes);
+app.use("/api/preclean", preCleanRoutes);
 app.use("/api/devices", deviceRoutes);
 
 const startServer = async (): Promise<void> => {

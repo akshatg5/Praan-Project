@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import DeviceState from "../models/DeviceState";
+import Telemetry from "../models/Telemetry";
 import { publishCommand } from "../mqtt/mqttClient";
 
 const activePreCleanTimers = new Map<string, NodeJS.Timeout>();
@@ -29,10 +30,14 @@ export const triggerPreClean = async (req: Request, res: Response) => {
       });
     }
 
-    const deviceState = await DeviceState.findOne({ deviceId });
+    // Get the most recent telemetry data to capture actual device state
+    const latestTelemetry = await Telemetry.findOne({ deviceId })
+      .sort({ timestamp: -1 })
+      .limit(1);
+    
     const oldDeviceState = {
-      powerState: deviceState?.powerState || "OFF", // by default, OFF
-      fanSpeed: deviceState?.fanSpeed || 0, // by default , 0
+      powerState: latestTelemetry?.powerState || "OFF",
+      fanSpeed: latestTelemetry?.fanSpeed || 0,
     };
 
     // cancel any already existing timers for this device
