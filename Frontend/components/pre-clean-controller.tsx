@@ -39,7 +39,7 @@ export function PreCleanController({ deviceId }: PreCleanControllerProps) {
     setError(null);
     setSuccess(null);
     try {
-      const response = await fetch(`${baseUrl}/api/pre-clean`, {
+      const response = await fetch(`${baseUrl}/api/preclean`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

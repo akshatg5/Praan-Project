@@ -13,12 +13,20 @@ import { AlertCircle, Clock } from "lucide-react";
 import { baseUrl } from "@/lib/api";
 
 interface Command {
-  id?: string;
-  _id?: string;
-  command: string;
-  timestamp: string;
-  status?: string;
-  parameters?: Record<string, unknown>;
+  _id: string;
+  deviceId: string;
+  commandType: "SET_FAN_SPEED" | "POWER_ON" | "POWER_OFF";
+  payload: {
+    fanSpeed?: number;
+    [key: string]: any;
+  };
+  status: "PENDING" | "SENT" | "ACKED" | "FAILED";
+  source: "SCHEDULED" | "PRE_CLEAN" | "MANUAL";
+  createdAt: string;
+  updatedAt: string;
+  sentAt?: string;
+  ackedAt?: string;
+  error?: string;
 }
 
 interface CommandHistoryProps {
@@ -37,8 +45,8 @@ export function CommandHistory({ deviceId }: CommandHistoryProps) {
           `${baseUrl}/api/devices/${deviceId}/commands?limit=20`,
         );
         if (!response.ok) throw new Error("Failed to fetch command history");
-        const data = await response.json();
-        setCommands(Array.isArray(data) ? data : data.commands || []);
+        const result = await response.json();
+        setCommands(result.data || []);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to load commands",
@@ -84,34 +92,51 @@ export function CommandHistory({ deviceId }: CommandHistoryProps) {
           </div>
         ) : (
           <div className="space-y-2 max-h-96 overflow-y-auto">
-            {commands.map((cmd, idx) => (
+            {commands.map((cmd) => (
               <div
-                key={cmd.id || cmd._id || idx}
+                key={cmd._id}
                 className="rounded-lg bg-secondary/30 p-3 border border-border text-sm"
               >
                 <div className="flex items-start justify-between mb-1">
-                  <span className="font-medium capitalize text-primary">
-                    {cmd.command}
+                  <span className="font-medium text-primary">
+                    {cmd.commandType.replace(/_/g, " ")}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {new Date(cmd.timestamp).toLocaleTimeString()}
+                    {new Date(cmd.createdAt).toLocaleString()}
                   </span>
                 </div>
-                {cmd.status && (
-                  <p className="text-xs text-muted-foreground mb-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="text-xs text-muted-foreground">
                     Status:{" "}
-                    <span className="text-foreground">{cmd.status}</span>
+                    <span className={
+                      cmd.status === "ACKED" 
+                        ? "text-green-400" 
+                        : cmd.status === "FAILED" 
+                        ? "text-red-400" 
+                        : "text-yellow-400"
+                    }>
+                      {cmd.status}
+                    </span>
                   </p>
-                )}
-                {cmd.parameters && Object.keys(cmd.parameters).length > 0 && (
+                  <span className="text-xs text-muted-foreground">•</span>
+                  <p className="text-xs text-muted-foreground">
+                    Source: <span className="text-foreground">{cmd.source}</span>
+                  </p>
+                </div>
+                {cmd.payload && Object.keys(cmd.payload).length > 0 && (
                   <div className="text-xs text-muted-foreground mt-1 p-2 bg-primary/5 rounded">
-                    {Object.entries(cmd.parameters).map(([key, value]) => (
+                    {Object.entries(cmd.payload).map(([key, value]) => (
                       <div key={key}>
                         {key}:{" "}
                         <span className="text-foreground">{String(value)}</span>
                       </div>
                     ))}
                   </div>
+                )}
+                {cmd.error && (
+                  <p className="text-xs text-red-400 mt-1">
+                    Error: {cmd.error}
+                  </p>
                 )}
               </div>
             ))}

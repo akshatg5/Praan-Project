@@ -8,6 +8,7 @@ import { DeviceTelemetry } from '@/components/device-telemetry';
 import { ScheduleManager } from '@/components/schedule-manager';
 import { PreCleanController } from '@/components/pre-clean-controller';
 import { CommandHistory } from '@/components/command-history';
+import { DeviceControls } from '@/components/device-controls';
 
 export default function Dashboard() {
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
@@ -57,11 +58,14 @@ export default function Dashboard() {
                   </p>
                 </div>
 
-                {/* Device Status and Pre-Clean Row */}
+                {/* Device Status and Controls Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <DeviceStatus deviceId={selectedDevice} />
-                  <PreCleanController deviceId={selectedDevice} />
+                  <DeviceControls deviceId={selectedDevice} />
                 </div>
+
+                {/* Pre-Clean Controller */}
+                <PreCleanController deviceId={selectedDevice} />
 
                 {/* Telemetry Chart */}
                 <DeviceTelemetry deviceId={selectedDevice} />

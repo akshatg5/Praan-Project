@@ -35,7 +35,7 @@ export function DeviceList({ onSelectDevice }: DeviceListProps) {
         const response = await fetch(`${baseUrl}/api/devices`);
         if (!response.ok) throw new Error("Failed to fetch devices");
         const data = await response.json();
-        setDevices(data.devices || []);
+        setDevices(data.data || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load devices");
       } finally {

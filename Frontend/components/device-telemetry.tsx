@@ -77,7 +77,7 @@ export function DeviceTelemetry({ deviceId }: DeviceTelemetryProps) {
     <Card className="border-border col-span-full">
       <CardHeader>
         <CardTitle>Telemetry Data</CardTitle>
-        <CardDescription>Historical sensor readings over time</CardDescription>
+        <CardDescription>Historical Device readings over time</CardDescription>
       </CardHeader>
       <CardContent>
         {error && (

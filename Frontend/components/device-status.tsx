@@ -15,12 +15,13 @@ import { baseUrl } from "@/lib/api";
 
 interface DeviceStatusData {
   deviceId: string;
-  status: string;
-  fanMode?: number;
-  power?: boolean;
-  temperature?: number;
-  humidity?: number;
-  lastUpdated?: string;
+  powerState: "ON" | "OFF";
+  fanSpeed: number;
+  isOnline: boolean;
+  wifiSsid?: string;
+  lastSeen?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface DeviceStatusProps {
@@ -39,8 +40,9 @@ export function DeviceStatus({ deviceId }: DeviceStatusProps) {
           `${baseUrl}/api/devices/${deviceId}/status`,
         );
         if (!response.ok) throw new Error("Failed to fetch device status");
-        const data = await response.json();
-        setStatus(data);
+        const result = await response.json();
+        // Extract the actual device data from the nested response
+        setStatus(result.data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load status");
       } finally {
@@ -88,57 +90,67 @@ export function DeviceStatus({ deviceId }: DeviceStatusProps) {
               </div>
               <Badge
                 className={
-                  status.power
+                  status.powerState === "ON"
                     ? "bg-green-500/20 text-green-400"
                     : "bg-red-500/20 text-red-400"
                 }
               >
-                {status.power ? "On" : "Off"}
+                {status.powerState}
               </Badge>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
-              <div className="rounded-lg bg-secondary/30 p-3 border border-border">
-                <p className="text-xs text-muted-foreground mb-1">Fan Mode</p>
-                <p className="text-lg font-semibold text-primary">
-                  {status.fanMode || 0}%
+              <div 
+                className={`rounded-lg p-3 border ${
+                  status.fanSpeed >= 75
+                    ? "bg-red-500 border-red-600"
+                    : status.fanSpeed >= 50
+                    ? "bg-secondary/30 border-border"
+                    : status.fanSpeed >= 25
+                    ? "bg-yellow-500/30 border-yellow-500/50"
+                    : "bg-white border-gray-300"
+                }`}
+              >
+                <p className={`text-xs mb-1 ${
+                  status.fanSpeed >= 75
+                    ? "text-white/80"
+                    : status.fanSpeed >= 25
+                    ? "text-muted-foreground"
+                    : "text-gray-600"
+                }`}>
+                  Fan Speed
+                </p>
+                <p className={`text-lg font-semibold ${
+                  status.fanSpeed >= 75
+                    ? "text-white"
+                    : status.fanSpeed >= 50
+                    ? "text-primary"
+                    : status.fanSpeed >= 25
+                    ? "text-yellow-600"
+                    : "text-black"
+                }`}>
+                  {status.fanSpeed}%
                 </p>
               </div>
               <div className="rounded-lg bg-secondary/30 p-3 border border-border">
-                <p className="text-xs text-muted-foreground mb-1">Status</p>
+                <p className="text-xs text-muted-foreground mb-1">Connection</p>
                 <p className="text-sm font-medium capitalize">
-                  {status.status}
+                  {status.isOnline ? "Online" : "Offline"}
                 </p>
               </div>
             </div>
 
-            {status.temperature !== undefined && (
-              <div className="grid grid-cols-2 gap-2">
-                <div className="rounded-lg bg-secondary/30 p-3 border border-border">
-                  <p className="text-xs text-muted-foreground mb-1">
-                    Temperature
-                  </p>
-                  <p className="text-lg font-semibold">
-                    {status.temperature.toFixed(1)}°C
-                  </p>
-                </div>
-                {status.humidity !== undefined && (
-                  <div className="rounded-lg bg-secondary/30 p-3 border border-border">
-                    <p className="text-xs text-muted-foreground mb-1">
-                      Humidity
-                    </p>
-                    <p className="text-lg font-semibold">
-                      {status.humidity.toFixed(1)}%
-                    </p>
-                  </div>
-                )}
+            {status.wifiSsid && (
+              <div className="rounded-lg bg-secondary/30 p-3 border border-border">
+                <p className="text-xs text-muted-foreground mb-1">WiFi Network</p>
+                <p className="text-sm font-medium">{status.wifiSsid}</p>
               </div>
             )}
 
-            {status.lastUpdated && (
+            {status.lastSeen && (
               <p className="text-xs text-muted-foreground">
-                Last updated:{" "}
-                {new Date(status.lastUpdated).toLocaleTimeString()}
+                Last seen:{" "}
+                {new Date(status.lastSeen).toLocaleString()}
               </p>
             )}
           </div>

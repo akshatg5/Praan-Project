@@ -54,8 +54,8 @@ export function ScheduleManager({ deviceId }: ScheduleManagerProps) {
         `${baseUrl}/api/schedules?deviceId=${deviceId}`,
       );
       if (!response.ok) throw new Error("Failed to fetch schedules");
-      const data = await response.json();
-      setSchedules(Array.isArray(data) ? data : data.schedules || []);
+      const result = await response.json();
+      setSchedules(result.data || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load schedules");
     } finally {
