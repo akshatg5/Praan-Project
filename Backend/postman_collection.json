@@ -1,245 +1,246 @@
 {
-  "info": {
-    "name": "Praan Assignment - Akshat Girdhar",
-    "description": "Sensor Data Storage and Commands",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:3000",
-      "type": "string"
-    },
-    {
-      "key": "device_id",
-      "value": "device_001",
-      "type": "string"
-    }
-  ],
-  "item": [
-    {
-      "name": "Health Check",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{base_url}}/",
-          "host": ["{{base_url}}"],
-          "path": [""]
-        }
-      }
-    },
-    {
-      "name": "Schedules",
-      "item": [
-        {
-          "name": "Create Schedule",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"deviceId\": \"{{device_id}}\",\n  \"day\": \"Monday\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"17:00\",\n  \"fanSpeed\": 75\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/schedules",
-              "host": ["{{base_url}}"],
-              "path": ["api", "schedules"]
-            }
-          }
-        },
-        {
-          "name": "Get All Schedules",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/schedules",
-              "host": ["{{base_url}}"],
-              "path": ["api", "schedules"]
-            }
-          }
-        },
-        {
-          "name": "Get Schedules by Device",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/schedules?deviceId={{device_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["api", "schedules"],
-              "query": [
-                {
-                  "key": "deviceId",
-                  "value": "{{device_id}}"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Delete Schedule",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/schedules/:scheduleId",
-              "host": ["{{base_url}}"],
-              "path": ["api", "schedules", ":scheduleId"],
-              "variable": [
-                {
-                  "key": "scheduleId",
-                  "value": "REPLACE_WITH_SCHEDULE_ID"
-                }
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Pre-Clean",
-      "item": [
-        {
-          "name": "Trigger Pre-Clean",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"deviceId\": \"{{device_id}}\",\n  \"fanMode\": 100,\n  \"duration\": 300\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/preclean",
-              "host": ["{{base_url}}"],
-              "path": ["api", "preclean"]
-            }
-          }
-        },
-        {
-          "name": "Trigger Pre-Clean (2 minutes)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"deviceId\": \"{{device_id}}\",\n  \"fanMode\": 80,\n  \"duration\": 120\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/api/preclean",
-              "host": ["{{base_url}}"],
-              "path": ["api", "preclean"]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "name": "Devices",
-      "item": [
-        {
-          "name": "Get All Devices",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/devices",
-              "host": ["{{base_url}}"],
-              "path": ["api", "devices"]
-            }
-          }
-        },
-        {
-          "name": "Get Device Status",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/devices/{{device_id}}/status",
-              "host": ["{{base_url}}"],
-              "path": ["api", "devices", "{{device_id}}", "status"]
-            }
-          }
-        },
-        {
-          "name": "Get Device Telemetry",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/devices/{{device_id}}/telemetry?limit=50",
-              "host": ["{{base_url}}"],
-              "path": ["api", "devices", "{{device_id}}", "telemetry"],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "50"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get Device Telemetry (Date Range)",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/devices/{{device_id}}/telemetry?startDate=2026-01-01&endDate=2026-02-01&limit=100",
-              "host": ["{{base_url}}"],
-              "path": ["api", "devices", "{{device_id}}", "telemetry"],
-              "query": [
-                {
-                  "key": "startDate",
-                  "value": "2026-01-01"
-                },
-                {
-                  "key": "endDate",
-                  "value": "2026-02-01"
-                },
-                {
-                  "key": "limit",
-                  "value": "100"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "name": "Get Command History",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/devices/{{device_id}}/commands?limit=20",
-              "host": ["{{base_url}}"],
-              "path": ["api", "devices", "{{device_id}}", "commands"],
-              "query": [
-                {
-                  "key": "limit",
-                  "value": "20"
-                }
-              ]
-            }
-          }
-        }
-      ]
-    }
-  ]
+	"info": {
+		"name": "Praan Assignment - Akshat Girdhar",
+		"description": "Complete API collection for Praan Assignment Backend",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Devices",
+			"item": [
+				{
+					"name": "Get All Devices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/devices",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "devices"]
+						}
+					}
+				},
+				{
+					"name": "Get Device Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/devices/device_001/status",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "devices", "device_001", "status"]
+						}
+					}
+				},
+				{
+					"name": "Get Device Telemetry",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/devices/device_001/telemetry?limit=50",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "devices", "device_001", "telemetry"],
+							"query": [
+								{
+									"key": "limit",
+									"value": "50"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Command History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/devices/device_001/commands",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "devices", "device_001", "commands"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Commands",
+			"item": [
+				{
+					"name": "Power ON",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"commandType\": \"POWER_ON\",\n  \"payload\": {}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/devices/device_001/commands",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "devices", "device_001", "commands"]
+						}
+					}
+				},
+				{
+					"name": "Power OFF",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"commandType\": \"POWER_OFF\",\n  \"payload\": {}\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/devices/device_001/commands",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "devices", "device_001", "commands"]
+						}
+					}
+				},
+				{
+					"name": "Set Fan Speed",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"commandType\": \"SET_FAN_SPEED\",\n  \"payload\": {\n    \"fanSpeed\": 75\n  }\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/devices/device_001/commands",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "devices", "device_001", "commands"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Schedules",
+			"item": [
+				{
+					"name": "Get Schedules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/schedules?deviceId=device_001",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "schedules"],
+							"query": [
+								{
+									"key": "deviceId",
+									"value": "device_001"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Schedule",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"deviceId\": \"device_001\",\n  \"day\": \"Monday\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"17:00\",\n  \"fanSpeed\": 75\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/schedules",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "schedules"]
+						}
+					}
+				},
+				{
+					"name": "Delete Schedule",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8000/api/schedules/:scheduleId",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "schedules", ":scheduleId"],
+							"variable": [
+								{
+									"key": "scheduleId",
+									"value": "6980c0074944f0a072531f1d"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Pre-Clean",
+			"item": [
+				{
+					"name": "Trigger Pre-Clean",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"deviceId\": \"device_001\",\n  \"fanMode\": 100,\n  \"duration\": 60\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/preclean",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "preclean"]
+						}
+					}
+				}
+			]
+		}
+	]
 }
